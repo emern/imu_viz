@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     visualizer = Plotter3D('Rotational state', 24)
     test_imu = ICM.ICM20948(start_char='&')
-    parser = p.Parser(dev_name="ICM20948", imu=test_imu)
+    parser = p.Parser(dev_name="ICM20948", imu=test_imu, port='COM5', baud=115200)
     filter = flt.RCFilter(cutoff=MODEL_LOWPASS_CUTOFF, sample_time=MODEL_TIMESTEP)
 
     estimator = ComplementaryFilter(alpha=0.1)

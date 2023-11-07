@@ -10,25 +10,10 @@ import components.IMU
 
 class Parser:
 
-    def __init__(self, dev_name: str, imu: components.IMU) -> None:
+    def __init__(self, dev_name: str, imu: components.IMU, port : str, baud : int) -> None:
 
-        # open configuration file
-        config_path = os.path.abspath("components/config/parser_conf.json")
-        config_file = open(config_path)
-        config_data = json.load(config_file)
-
-        # get device configuration
-        our_device = ""
-
-        for device in config_data['device']:
-            if device['name'] == dev_name:
-                our_device = device
-
-        if our_device == "":
-            raise Exception("Missing device configuration!")
-
-        self.port = our_device['port']
-        self.baud = our_device['baudrate']
+        self.port = port
+        self.baud = baud
 
         print(f"Setting up connection on port {self.port} at baud {self.baud}")
         self.ser = serial.Serial(baudrate=self.baud, port=self.port)
