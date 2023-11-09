@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     scatter = ScatterPlotter3D(name='Collected data', fps=24, names=['actual', 'corrected'], colors=[[1, 0, 0, 1], [0, 0, 1, 1]])
     test_imu = ICM.ICM20948(start_char='&')
-    parser = p.Parser(dev_name="ICM20948", imu=test_imu)
+    parser = p.Parser(dev_name="ICM20948", imu=test_imu, baud=115200, port='COM5')
     filter = flt.RCFilter(cutoff=MODEL_LOWPASS_CUTOFF, sample_time=MODEL_TIMESTEP)
 
     print("Starting!!!")

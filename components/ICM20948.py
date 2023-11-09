@@ -24,8 +24,8 @@ class ICMRawData(components.IMU.IMUData):
         self.gyr_y = gyr_y
         self.gyr_z = gyr_z
         self.mag_x = mag_x
-        self.mag_y = -mag_y # direction swapped from other sensors
-        self.mag_z = -mag_z # direction swapped from other sensors
+        self.mag_y = mag_y
+        self.mag_z = mag_z
 
         self.has_been_vectorized = False
         self.vectorized_data = None
@@ -75,6 +75,11 @@ class ICMRawData(components.IMU.IMUData):
     # Get accelerometer data as x,y,z array
     def get_raw_accel(self) -> np.ndarray:
         return np.array([self.ac_x, self.ac_y, self.ac_z])
+
+    # Get gyro rates in x,y,z axis
+    def get_raw_gyro(self) -> np.ndarray:
+        return np.array([self.gyr_x, self.gyr_y, self.gyr_z])
+
 
 
 

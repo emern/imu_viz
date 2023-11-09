@@ -95,8 +95,8 @@ class _DynamicPlotter():
 
             # Calculate new vectors from elementary X, Y and Z vectors
             xvec_new = tuple(new_item.calc_vec(np.array([1,0,0])))
-            yvec_new = tuple(new_item.calc_vec(np.array([0,1,0])))
-            zvec_new = tuple(new_item.calc_vec(np.array([0,0,1])))
+            yvec_new = tuple(new_item.calc_vec(np.array([0,-1,0])))
+            zvec_new = tuple(new_item.calc_vec(np.array([0,0,-1])))
 
             pts_x = np.array([self.center, xvec_new])
             pts_y = np.array([self.center, yvec_new])
