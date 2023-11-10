@@ -75,17 +75,17 @@ class RotationMatrix:
     Credit to https://stanford.edu/class/ee267/lectures/lecture10.pdf
     """
     @staticmethod
-    def quat_multiply(quaternion0, quaternion1):
+    def quat_multiply(quat0, quat1):
 
-        qw = quaternion0[0]
-        qx = quaternion0[1]
-        qy = quaternion0[2]
-        qz = quaternion0[3]
+        qw = quat0[0]
+        qx = quat0[1]
+        qy = quat0[2]
+        qz = quat0[3]
 
-        pw = quaternion1[0]
-        px = quaternion1[1]
-        py = quaternion1[2]
-        pz = quaternion1[3]
+        pw = quat1[0]
+        px = quat1[1]
+        py = quat1[2]
+        pz = quat1[3]
 
         return np.array([
             qw*pw - qx*px - qy*py - qz*pz,
@@ -93,3 +93,55 @@ class RotationMatrix:
             qw*py - qx*pz + qy*pw + qz*px,
             qw*pz + qx*py - qy*px + qz*pw
         ])
+
+    """
+    Interpolate between 2 quaternions using SLERP method -> https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+    """
+    @staticmethod
+    def quat_interpolate(quat0, quat1, t) -> np.ndarray:
+
+        qw = quat0[0]
+        qx = quat0[1]
+        qy = quat0[2]
+        qz = quat0[3]
+
+        pw = quat1[0]
+        px = quat1[1]
+        py = quat1[2]
+        pz = quat1[3]
+
+        cos_half_theta = qw*pw + qx*px + qy*py + qz*pz
+
+        # Invert so that we are not sensitive to a positive or negative representation
+        # (w, x, y, z) = (-w, -x, -y, -z)
+        if cos_half_theta < 0:
+            pw = -pw
+            px = -px
+            py = -py
+            pz = pz
+            cos_half_theta = -cos_half_theta
+
+        # If quat0 = quat1  or quat0 = -quat1, then we can just return quat0
+        if abs(cos_half_theta) >= 1:
+            return np.array([qw, qx, qy, qz])
+
+        half_theta = m.acos(cos_half_theta)
+        sin_half_theta = m.sqrt(1 - cos_half_theta*cos_half_theta)
+
+        # When theta = 180 degrees, the result is not fully defined, we can rotate around any axis normal to either quaternion
+        if abs(sin_half_theta) < 0.01:
+            return np.array([qw, qx, qy, qz])
+
+        ratioA = m.sin((1-t) * half_theta) / sin_half_theta
+        ratioB = m.sin(t * half_theta) / sin_half_theta
+
+        # Make sure there are no undefined areas where the ratios get boosted over 1
+        if ratioA >= 1 or ratioB >= 1:
+            ratioA = 1
+            ratioB = 0
+
+        return np.array([qw * ratioA + pw * ratioB,
+                        qx * ratioA + px * ratioB,
+                        qy * ratioA + py * ratioB,
+                        qz * ratioA + pz * ratioB])
+

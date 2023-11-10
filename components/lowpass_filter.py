@@ -4,6 +4,7 @@ Low pass filter designed to be analog of RC lowpass
 
 import math
 import numpy as np
+import time
 
 class RCFilter:
 

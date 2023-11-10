@@ -58,7 +58,8 @@ class ComplementaryFilter:
 
         # We need an existing model estimate to be able to factor gyro readings for proper complementary filter
         if self.first_estimate_done == False:
-            self.last_estimate = np.array([1, 0, 0, 0])
+            self.last_estimate = self._accel_mag_model(accel_data=accel_data, mag_data=mag_data)
+            self.last_estimate = self.last_estimate / np.linalg.norm(self.last_estimate)
             self.first_estimate_done = True
             self.last_time = time.time()
             return RotationMatrix.quaternion_rotation_matrix(self.last_estimate)
@@ -72,7 +73,7 @@ class ComplementaryFilter:
         accel_mag_estimate = accel_mag_estimate / np.linalg.norm(accel_mag_estimate)
 
         # Find complementary filter
-        total = (1-self.alpha) * gyro_angles_estimate + (self.alpha * accel_mag_estimate)
+        total = RotationMatrix.quat_interpolate(accel_mag_estimate, gyro_angles_estimate, self.alpha)
 
         self.last_estimate = total / np.linalg.norm(total)
         self.last_time = time.time()
